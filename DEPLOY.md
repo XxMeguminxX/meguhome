@@ -9,8 +9,8 @@
 
 2. Copy nginx config:
    ```bash
-   scp nginx.conf user@your.vps:/etc/nginx/sites-available/home-dashboard
-   ssh user@your.vps "ln -s /etc/nginx/sites-available/home-dashboard /etc/nginx/sites-enabled/ && mkdir -p /var/www/home-dashboard && nginx -t && systemctl reload nginx"
+   scp nginx.conf user@your.vps:/etc/nginx/sites-available/mihome
+   ssh user@your.vps "ln -s /etc/nginx/sites-available/mihome /etc/nginx/sites-enabled/ && mkdir -p /var/www/mihome && nginx -t && systemctl reload nginx"
    ```
 
 3. Set up SSL:

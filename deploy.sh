@@ -3,7 +3,7 @@ set -e
 
 REMOTE_USER="${DEPLOY_USER:-root}"
 REMOTE_HOST="${DEPLOY_HOST:?Error: DEPLOY_HOST is not set}"
-REMOTE_PATH="/var/www/home-dashboard"
+REMOTE_PATH="/var/www/mihome"
 
 echo "Building..."
 npm run build
