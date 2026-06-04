@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import App from './App'
+import { config } from './config'
 
 vi.spyOn(global, 'fetch').mockResolvedValue({
   ok: true,
@@ -19,7 +20,7 @@ describe('App', () => {
 
   it('renders character name from config', () => {
     render(<App />)
-    expect(screen.getByText('Shima Rin')).toBeInTheDocument()
+    expect(screen.getByText(config.character.name)).toBeInTheDocument()
   })
 
   it('renders nav link from config', () => {

@@ -1,5 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { config } from '../config'
+
+function TenorGif({ postId }: { postId: string }) {
+  useEffect(() => {
+    const existing = document.querySelector('script[src*="tenor.com/embed"]')
+    if (existing) existing.remove()
+    const script = document.createElement('script')
+    script.src = 'https://tenor.com/embed.js'
+    script.async = true
+    document.body.appendChild(script)
+    return () => { script.remove() }
+  }, [postId])
+
+  return (
+    <div
+      className="tenor-gif-embed w-full"
+      data-postid={postId}
+      data-share-method="host"
+      data-aspect-ratio="0.706827"
+      data-width="100%"
+    />
+  )
+}
 
 function FallbackCharacter() {
   return (
@@ -33,15 +55,17 @@ export default function CharacterPanel() {
           Read More
         </button>
 
-        <div className="relative w-48 h-64 mt-4">
-          {imgError ? (
+        <div className="mt-4 w-56 drop-shadow-xl" role="img" aria-label={character.name}>
+          {character.tenorPostId ? (
+            <TenorGif postId={character.tenorPostId} />
+          ) : imgError ? (
             <FallbackCharacter />
           ) : (
             <img
               src={character.imagePath}
               alt={character.name}
               onError={() => setImgError(true)}
-              className="w-full h-full object-contain drop-shadow-xl"
+              className="w-full h-full object-contain"
             />
           )}
         </div>

@@ -4,6 +4,7 @@ export interface CharacterConfig {
   description: string
   imagePath: string
   readMoreContent: string
+  tenorPostId?: string
 }
 
 export interface WeatherConfig {

@@ -10,13 +10,14 @@ export const config: AppConfig = {
     ],
   },
   character: {
-    name: 'Shima Rin',
+    name: 'Osaka',
     subtitle: 'Character Info',
     description:
-      'A young girl who enjoys solo camping in scenic locations. She prefers quiet adventures and the peace of nature over crowds.',
+      'Ayumu Kasuga, nicknamed "Osaka", is a transfer student from Osaka known for her dreamy, slow-paced personality and unique way of thinking.',
     imagePath: '/character.svg',
+    tenorPostId: '13422167952658823729',
     readMoreContent:
-      'Shima Rin is known for her love of solitude and the outdoors. She camps alone, brews her own coffee, and finds joy in simple moments under the open sky. Over time, she discovers that sharing these experiences with friends can be just as rewarding.',
+      'Osaka may seem out of it, but she often surprises everyone with unexpectedly deep observations. She daydreams constantly, speaks at her own pace, and has a talent for tongue twisters. Despite her airheaded reputation, she is sincere, kind, and quietly hilarious.',
   },
   weather: {
     city: 'Jakarta',
