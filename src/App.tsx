@@ -5,21 +5,14 @@ import CalendarWidget from './components/CalendarWidget'
 import QuickLinks from './components/QuickLinks'
 import { config } from './config'
 
-function DecorativeCircles() {
-  return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden">
-      <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-lavender-300/30 blur-3xl" />
-      <div className="absolute top-1/3 -left-32 w-80 h-80 rounded-full bg-blush/20 blur-3xl" />
-      <div className="absolute bottom-10 right-1/4 w-64 h-64 rounded-full bg-lavender-400/20 blur-2xl" />
-      <div className="absolute top-20 left-1/3 w-40 h-40 rounded-full bg-blush/15 blur-2xl" />
-    </div>
-  )
-}
-
 export default function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-lavender-50 to-lavender-200 relative">
-      <DecorativeCircles />
+    <div className="bg-gradient-to-br from-violet-400 via-fuchsia-300 to-amber-200 relative min-h-screen">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-16 -left-16 w-72 h-72 rounded-full bg-yellow-300 opacity-50 blur-3xl" style={{ animation: 'float-slow 9s ease-in-out infinite' }} />
+        <div className="absolute top-1/3 -right-16 w-64 h-64 rounded-full bg-cyan-300 opacity-40 blur-3xl" style={{ animation: 'float-mid 11s ease-in-out infinite' }} />
+        <div className="absolute bottom-0 left-1/3 w-56 h-56 rounded-full bg-pink-300 opacity-40 blur-3xl" style={{ animation: 'float-fast 7s ease-in-out infinite' }} />
+      </div>
 
       <Navbar />
 

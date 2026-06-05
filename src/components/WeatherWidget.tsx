@@ -51,31 +51,31 @@ export default function WeatherWidget({ city, apiKey }: Props) {
 
   if (status === 'loading') {
     return (
-      <div className="bg-white/50 backdrop-blur rounded-2xl p-4">
-        <span className="text-gray-400 text-sm">Loading...</span>
+      <div className="bg-[#74B9FF] border-2 border-[#1a1a2e] rounded-2xl p-4 shadow-[4px_4px_0px_#1a1a2e]">
+        <span className="text-[#1a1a2e]/70 text-sm font-medium">Loading...</span>
       </div>
     )
   }
 
   if (status === 'error') {
     return (
-      <div className="bg-white/50 backdrop-blur rounded-2xl p-4">
-        <span className="text-gray-400 text-sm">Cuaca tidak tersedia</span>
+      <div className="bg-[#74B9FF] border-2 border-[#1a1a2e] rounded-2xl p-4 shadow-[4px_4px_0px_#1a1a2e]">
+        <span className="text-[#1a1a2e]/70 text-sm font-medium">Cuaca tidak tersedia</span>
       </div>
     )
   }
 
   return (
-    <div className="bg-white/50 backdrop-blur rounded-2xl p-4 flex items-center gap-3">
+    <div className="bg-[#74B9FF] border-2 border-[#1a1a2e] rounded-2xl p-4 shadow-[4px_4px_0px_#1a1a2e] flex items-center gap-3">
       <img
         src={`https://openweathermap.org/img/wn/${weather!.icon}@2x.png`}
         alt={weather!.description}
         className="w-12 h-12"
       />
       <div>
-        <div className="text-2xl font-bold text-gray-700">{weather!.temp}°C</div>
-        <div className="text-xs text-gray-500 capitalize">{weather!.description}</div>
-        <div className="text-xs text-lavender-400 font-medium">{weather!.city}</div>
+        <div className="text-2xl font-black text-[#1a1a2e]">{weather!.temp}°C</div>
+        <div className="text-xs text-[#1a1a2e]/70 font-medium capitalize">{weather!.description}</div>
+        <div className="text-xs text-violet-700 font-bold">{weather!.city}</div>
       </div>
     </div>
   )

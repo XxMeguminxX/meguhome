@@ -3,8 +3,8 @@ import ClockWidget from './ClockWidget'
 
 export default function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-3 bg-white/40 backdrop-blur-md border-b border-white/30">
-      <span className="font-serif font-bold text-lavender-500 text-lg">
+    <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-3 bg-white/20 backdrop-blur-md border-b border-white/30">
+      <span className="font-black text-white drop-shadow text-xl">
         {config.site.title}
       </span>
 
@@ -13,7 +13,7 @@ export default function Navbar() {
           <li key={link.href}>
             <a
               href={link.href}
-              className="text-sm font-medium text-gray-600 hover:text-lavender-500 transition-colors"
+              className="text-sm font-bold text-white/90 hover:text-yellow-300 transition-colors drop-shadow"
             >
               {link.label}
             </a>

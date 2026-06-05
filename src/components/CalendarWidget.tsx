@@ -41,20 +41,20 @@ export default function CalendarWidget() {
   ]
 
   return (
-    <div className="bg-white/50 backdrop-blur rounded-2xl p-4 w-full">
+    <div className="bg-[#4ECDC4] border-2 border-[#1a1a2e] rounded-2xl p-4 w-full shadow-[4px_4px_0px_#1a1a2e]">
       <div className="flex items-center justify-between mb-3">
         <button
           aria-label="Previous month"
           onClick={prevMonth}
-          className="text-lavender-400 hover:text-lavender-500 font-bold w-6 text-center"
+          className="bg-white border-2 border-[#1a1a2e] rounded-lg w-7 h-7 flex items-center justify-center font-bold text-[#1a1a2e] hover:bg-[#FFE66D] shadow-[2px_2px_0px_#1a1a2e] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_#1a1a2e]"
         >
           ‹
         </button>
-        <span className="text-sm font-semibold text-gray-700">{monthLabel}</span>
+        <span className="text-sm font-black text-[#1a1a2e]">{monthLabel}</span>
         <button
           aria-label="Next month"
           onClick={nextMonth}
-          className="text-lavender-400 hover:text-lavender-500 font-bold w-6 text-center"
+          className="bg-white border-2 border-[#1a1a2e] rounded-lg w-7 h-7 flex items-center justify-center font-bold text-[#1a1a2e] hover:bg-[#FFE66D] shadow-[2px_2px_0px_#1a1a2e] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_#1a1a2e]"
         >
           ›
         </button>
@@ -62,7 +62,7 @@ export default function CalendarWidget() {
 
       <div className="grid grid-cols-7 gap-0.5 text-center">
         {DAY_NAMES.map(d => (
-          <div key={d} className="text-xs text-gray-400 font-medium py-1">
+          <div key={d} className="text-xs text-[#1a1a2e]/60 font-bold py-1">
             {d}
           </div>
         ))}
@@ -73,8 +73,8 @@ export default function CalendarWidget() {
               day === null
                 ? ''
                 : isToday(day)
-                ? 'bg-lavender-500 text-white font-bold'
-                : 'text-gray-600 hover:bg-lavender-100 cursor-default'
+                ? 'bg-[#FFE66D] text-[#1a1a2e] font-black border border-[#1a1a2e] rounded-lg'
+                : 'text-[#1a1a2e] hover:bg-white/50 cursor-default rounded-lg font-medium'
             }`}
           >
             {day}

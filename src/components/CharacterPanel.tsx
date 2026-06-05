@@ -1,32 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { config } from '../config'
-
-function TenorGif({ postId }: { postId: string }) {
-  useEffect(() => {
-    const existing = document.querySelector('script[src*="tenor.com/embed"]')
-    if (existing) existing.remove()
-    const script = document.createElement('script')
-    script.src = 'https://tenor.com/embed.js'
-    script.async = true
-    document.body.appendChild(script)
-    return () => { script.remove() }
-  }, [postId])
-
-  return (
-    <div
-      className="tenor-gif-embed w-full"
-      data-postid={postId}
-      data-share-method="host"
-      data-aspect-ratio="0.706827"
-      data-width="100%"
-    />
-  )
-}
 
 function FallbackCharacter() {
   return (
-    <div className="w-full h-full flex items-center justify-center bg-lavender-100 rounded-2xl">
-      <span className="text-lavender-400 text-6xl">✦</span>
+    <div className="w-full h-full flex items-center justify-center bg-[#4ECDC4] border-2 border-[#1a1a2e] rounded-2xl">
+      <span className="text-[#1a1a2e] text-6xl">✦</span>
     </div>
   )
 }
@@ -38,34 +16,32 @@ export default function CharacterPanel() {
 
   return (
     <>
-      <div className="flex flex-col gap-3">
-        <p className="text-xs font-medium uppercase tracking-widest text-lavender-400">
+      <div className="flex flex-col gap-3 bg-white/30 backdrop-blur-sm border-2 border-white/50 rounded-3xl p-8 shadow-[4px_4px_0px_rgba(0,0,0,0.15)]">
+        <p className="text-xs uppercase text-fuchsia-600 font-bold tracking-widest">
           {character.subtitle}
         </p>
-        <h1 className="font-serif text-5xl font-bold text-gray-800 leading-tight">
+        <h1 className="text-5xl font-black text-[#1a1a2e] leading-tight">
           {character.name}
         </h1>
-        <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
+        <p className="text-sm text-[#1a1a2e]/70 font-medium leading-relaxed max-w-xs">
           {character.description}
         </p>
         <button
           onClick={() => setModalOpen(true)}
-          className="mt-2 w-fit px-5 py-2 rounded-full bg-lavender-500 text-white text-sm font-medium hover:bg-lavender-400 transition-colors"
+          className="mt-2 w-fit px-6 py-2.5 rounded-full bg-[#FFE66D] border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-black shadow-[4px_4px_0px_#1a1a2e] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_#1a1a2e] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
         >
           Read More
         </button>
 
-        <div className="mt-4 w-56 drop-shadow-xl" role="img" aria-label={character.name}>
-          {character.tenorPostId ? (
-            <TenorGif postId={character.tenorPostId} />
-          ) : imgError ? (
+        <div className="mt-4 w-56" role="img" aria-label={character.name}>
+          {imgError ? (
             <FallbackCharacter />
           ) : (
             <img
               src={character.imagePath}
               alt={character.name}
               onError={() => setImgError(true)}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain drop-shadow-[4px_4px_0px_#1a1a2e]"
             />
           )}
         </div>
@@ -82,14 +58,14 @@ export default function CharacterPanel() {
             onClick={() => setModalOpen(false)}
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
           />
-          <div className="relative z-10 bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
-            <h2 className="font-serif text-2xl font-bold text-gray-800 mb-4">
+          <div className="relative z-10 bg-white rounded-2xl p-8 max-w-md mx-4 border-2 border-[#1a1a2e] shadow-[6px_6px_0px_#1a1a2e]">
+            <h2 className="text-2xl font-black text-[#1a1a2e] mb-4">
               {character.name}
             </h2>
             <p className="text-gray-600 leading-relaxed">{character.readMoreContent}</p>
             <button
               onClick={() => setModalOpen(false)}
-              className="mt-6 px-4 py-2 rounded-full bg-lavender-500 text-white text-sm hover:bg-lavender-400 transition-colors"
+              className="mt-6 px-4 py-2 rounded-full bg-[#FF6B6B] border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-black shadow-[3px_3px_0px_#1a1a2e] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_#1a1a2e] transition-all"
             >
               Close
             </button>

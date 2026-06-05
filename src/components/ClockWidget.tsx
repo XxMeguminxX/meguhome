@@ -26,10 +26,10 @@ export default function ClockWidget() {
 
   return (
     <div className="text-right">
-      <div className="text-lg font-mono font-semibold text-lavender-500">
+      <div className="text-lg font-mono font-black text-white drop-shadow">
         {formatTime(now)}
       </div>
-      <div className="text-xs text-gray-400 mt-0.5">{formatDate(now)}</div>
+      <div className="text-xs text-white/70 font-medium mt-0.5">{formatDate(now)}</div>
     </div>
   )
 }
