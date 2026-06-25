@@ -2,7 +2,7 @@ import type { AppConfig } from './types'
 
 export const config: AppConfig = {
   site: {
-    title: 'Mihome',
+    title: 'Meguhome',
     navLinks: [
       { label: 'Home', href: '#' },
       { label: 'Links', href: '#links' },
