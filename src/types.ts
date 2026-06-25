@@ -28,9 +28,17 @@ export interface SiteConfig {
   navLinks: NavLink[]
 }
 
+export interface ProfileConfig {
+  username: string
+  handle: string
+  bio: string
+  avatarColor?: string
+}
+
 export interface AppConfig {
   character: CharacterConfig
   weather: WeatherConfig
   quickLinks: QuickLink[]
   site: SiteConfig
+  profile: ProfileConfig
 }

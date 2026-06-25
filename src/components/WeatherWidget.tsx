@@ -30,6 +30,7 @@ async function fetchWeather(city: string, apiKey: string): Promise<WeatherData> 
 export default function WeatherWidget({ city, apiKey }: Props) {
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading')
+  const [isNightMode, setIsNightMode] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -49,33 +50,85 @@ export default function WeatherWidget({ city, apiKey }: Props) {
     return () => { cancelled = true; clearInterval(id) }
   }, [city, apiKey])
 
-  if (status === 'loading') {
-    return (
-      <div className="bg-[#74B9FF] border-2 border-[#1a1a2e] rounded-2xl p-4 shadow-[4px_4px_0px_#1a1a2e]">
-        <span className="text-[#1a1a2e]/70 text-sm font-medium">Loading...</span>
-      </div>
-    )
-  }
-
-  if (status === 'error') {
-    return (
-      <div className="bg-[#74B9FF] border-2 border-[#1a1a2e] rounded-2xl p-4 shadow-[4px_4px_0px_#1a1a2e]">
-        <span className="text-[#1a1a2e]/70 text-sm font-medium">Cuaca tidak tersedia</span>
-      </div>
-    )
-  }
+  const displayCity = status === 'ok' && weather ? weather.city : city
+  const displayTemp = status === 'ok' && weather ? weather.temp : 30
+  const displayDesc = status === 'ok' && weather ? weather.description : ''
 
   return (
-    <div className="bg-[#74B9FF] border-2 border-[#1a1a2e] rounded-2xl p-4 shadow-[4px_4px_0px_#1a1a2e] flex items-center gap-3">
-      <img
-        src={`https://openweathermap.org/img/wn/${weather!.icon}@2x.png`}
-        alt={weather!.description}
-        className="w-12 h-12"
-      />
-      <div>
-        <div className="text-2xl font-black text-[#1a1a2e]">{weather!.temp}°C</div>
-        <div className="text-xs text-[#1a1a2e]/70 font-medium capitalize">{weather!.description}</div>
-        <div className="text-xs text-violet-700 font-bold">{weather!.city}</div>
+    <div
+      className="card p-5 animate-fade-up"
+      style={{ background: isNightMode ? 'linear-gradient(135deg, #2A1A20, #3D2F3A)' : '#ffffff' }}
+    >
+      <div className="flex items-start justify-between mb-2">
+        <div>
+          <p className="text-[22px] font-black font-display leading-none" style={{ color: isNightMode ? '#fff' : '#1a2a3a' }}>
+            Weather.
+          </p>
+          {status === 'loading' && (
+            <p className="text-[12px] font-semibold mt-0.5" style={{ color: '#B07878' }}>Loading...</p>
+          )}
+          {status === 'error' && (
+            <p className="text-[12px] font-semibold mt-0.5" style={{ color: '#C24448' }}>Cuaca tidak tersedia</p>
+          )}
+        </div>
+        <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl"
+          style={{ background: isNightMode ? 'rgba(255,255,255,0.08)' : '#fdf0f0' }}>
+          {isNightMode ? '🌙' : '☁️'}
+        </div>
+      </div>
+
+      <p className="text-[44px] font-black font-display leading-none mb-1" style={{ color: isNightMode ? '#fff' : '#1a2a3a' }}>
+        {displayTemp}°c
+      </p>
+
+      <div className="flex items-center gap-1 mb-0.5">
+        <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none"
+          stroke={isNightMode ? '#C8A0A0' : '#B07878'} strokeWidth="2.5" strokeLinecap="round">
+          <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+        <p className="text-[12px] font-bold" style={{ color: isNightMode ? '#C8A0A0' : '#B07878' }}>
+          {displayCity}
+        </p>
+      </div>
+      {displayDesc && (
+        <p className="text-[11px] font-medium mb-1 capitalize" style={{ color: isNightMode ? '#9A7A7A' : '#C8A0A0' }}>
+          {displayDesc}
+        </p>
+      )}
+
+      <div className="flex items-center gap-2 mt-3">
+        <button
+          onClick={() => setIsNightMode(false)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black transition-all"
+          style={!isNightMode
+            ? { background: 'linear-gradient(135deg, #F7C964, #F5D048)', color: '#5F4F5D', boxShadow: '0 3px 10px rgba(247,201,100,0.5)' }
+            : { background: isNightMode ? 'rgba(255,255,255,0.08)' : '#fdf0f0', color: isNightMode ? '#C8A0A0' : '#B07878' }}
+        >
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          light mode
+        </button>
+
+        <button
+          onClick={() => setIsNightMode(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black transition-all"
+          style={isNightMode
+            ? { background: 'linear-gradient(135deg, #5F4F5D, #3D2F3A)', color: '#fff', boxShadow: '0 3px 10px rgba(95,79,93,0.5)' }
+            : { background: '#fdf0f0', color: '#B07878' }}
+        >
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          Night mode
+        </button>
       </div>
     </div>
   )

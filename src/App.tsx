@@ -1,37 +1,95 @@
-import Navbar from './components/Navbar'
-import CharacterPanel from './components/CharacterPanel'
+import { useState } from 'react'
+import Sidebar from './components/Sidebar'
+import DashboardHeader from './components/DashboardHeader'
+import FilterCard from './components/FilterCard'
 import WeatherWidget from './components/WeatherWidget'
-import CalendarWidget from './components/CalendarWidget'
-import QuickLinks from './components/QuickLinks'
+import ProfileCard from './components/ProfileCard'
+import EventCard from './components/EventCard'
+import CollectionCard from './components/CollectionCard'
 import { config } from './config'
 
 export default function App() {
+  const [search, setSearch] = useState('')
+
   return (
-    <div className="bg-gradient-to-br from-violet-400 via-fuchsia-300 to-amber-200 relative min-h-screen">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-16 -left-16 w-72 h-72 rounded-full bg-yellow-300 opacity-50 blur-3xl" style={{ animation: 'float-slow 9s ease-in-out infinite' }} />
-        <div className="absolute top-1/3 -right-16 w-64 h-64 rounded-full bg-cyan-300 opacity-40 blur-3xl" style={{ animation: 'float-mid 11s ease-in-out infinite' }} />
-        <div className="absolute bottom-0 left-1/3 w-56 h-56 rounded-full bg-pink-300 opacity-40 blur-3xl" style={{ animation: 'float-fast 7s ease-in-out infinite' }} />
-      </div>
+    <div className="h-screen flex overflow-hidden p-4 gap-4">
+      {/* Sidebar — fixed height, no scroll */}
+      <Sidebar />
 
-      <Navbar />
+      {/* Main content — scrollable */}
+      <main className="flex-1 flex flex-col gap-4 min-w-0 overflow-y-auto pr-1">
+        <DashboardHeader search={search} onSearchChange={setSearch} />
 
-      <main className="relative z-10 max-w-6xl mx-auto px-8 py-12">
-        <div className="grid grid-cols-3 gap-8 items-start">
-          <div className="col-span-2">
-            <CharacterPanel />
+        {/* Card grid — 2 equal columns */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Left column */}
+          <div className="flex flex-col gap-4">
+            <FilterCard />
+            <ProfileCard />
+            <EventCard />
           </div>
 
+          {/* Right column */}
           <div className="flex flex-col gap-4">
             <WeatherWidget city={config.weather.city} apiKey={config.weather.apiKey} />
-            <CalendarWidget />
+            <CollectionCard />
           </div>
         </div>
 
-        <div id="links" className="mt-12">
-          <QuickLinks links={config.quickLinks} />
+        {/* Quick links */}
+        <div id="links" className="pb-4">
+          <p className="text-[10px] font-black text-gray-400 tracking-widest uppercase mb-2">Quick Access</p>
+          <div className="flex flex-wrap gap-2">
+            {config.quickLinks.map(link => (
+              <a
+                key={link.url}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-black text-gray-600 bg-white transition-all hover:scale-[1.03] hover:shadow-md"
+                style={{ boxShadow: '0 2px 10px rgba(79,195,247,0.1)' }}
+              >
+                {link.icon && <span>{link.icon}</span>}
+                {link.label}
+              </a>
+            ))}
+          </div>
         </div>
       </main>
+
+      {/* Decorative character — right panel */}
+      <CharacterDecoration />
+    </div>
+  )
+}
+
+function CharacterDecoration() {
+  const [imgError, setImgError] = useState(false)
+
+  return (
+    <div
+      className="flex-shrink-0 flex items-end justify-center pointer-events-none"
+      style={{ width: 220 }}
+    >
+      {imgError ? (
+        <div
+          className="text-[100px] select-none animate-float mb-8"
+          style={{ filter: 'drop-shadow(0 10px 40px rgba(79,195,247,0.3))' }}
+        >
+          ✦
+        </div>
+      ) : (
+        <img
+          src={config.character.imagePath}
+          alt=""
+          onError={() => setImgError(true)}
+          className="w-full h-auto object-contain animate-float"
+          style={{
+            maxHeight: '80vh',
+            filter: 'drop-shadow(0 12px 40px rgba(79,195,247,0.3))',
+          }}
+        />
+      )}
     </div>
   )
 }

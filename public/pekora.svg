@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="440" viewBox="0 0 300 440">
+
+  <!-- ===== RABBIT EARS ===== -->
+  <!-- Left ear outer -->
+  <ellipse cx="108" cy="44" rx="17" ry="52" fill="#EEEEF8" stroke="#2a2a40" stroke-width="2.5" transform="rotate(-14,108,44)"/>
+  <!-- Left ear inner -->
+  <ellipse cx="108" cy="47" rx="8" ry="38" fill="#FFB6C8" transform="rotate(-14,108,47)"/>
+
+  <!-- Right ear outer -->
+  <ellipse cx="192" cy="44" rx="17" ry="52" fill="#EEEEF8" stroke="#2a2a40" stroke-width="2.5" transform="rotate(14,192,44)"/>
+  <!-- Right ear inner -->
+  <ellipse cx="192" cy="47" rx="8" ry="38" fill="#FFB6C8" transform="rotate(14,192,47)"/>
+
+  <!-- ===== BACK HAIR (long, flowing silver) ===== -->
+  <!-- Left side -->
+  <path d="M 88 100 Q 52 160 50 280 Q 55 360 76 390 Q 92 400 104 360 Q 96 290 96 200 Q 94 148 88 100 Z" fill="#D6D6EC" stroke="#2a2a40" stroke-width="1.8"/>
+  <!-- Right side -->
+  <path d="M 212 100 Q 248 160 250 280 Q 245 360 224 390 Q 208 400 196 360 Q 204 290 204 200 Q 206 148 212 100 Z" fill="#D6D6EC" stroke="#2a2a40" stroke-width="1.8"/>
+
+  <!-- ===== BODY / OUTFIT ===== -->
+  <!-- Main body blue -->
+  <ellipse cx="150" cy="318" rx="82" ry="98" fill="#1A5BAA" stroke="#2a2a40" stroke-width="2.5"/>
+
+  <!-- White sailor collar left -->
+  <path d="M 116 210 L 84 268 Q 150 262 216 268 L 184 210 Q 150 235 116 210 Z" fill="#F8F8FF" stroke="#2a2a40" stroke-width="2"/>
+  <!-- Blue inner collar triangle -->
+  <path d="M 122 204 L 150 248 L 178 204 Q 150 220 122 204 Z" fill="#1A5BAA"/>
+  <!-- Collar border lines -->
+  <line x1="116" y1="210" x2="84" y2="265" stroke="#2a2a40" stroke-width="1.5"/>
+  <line x1="184" y1="210" x2="216" y2="265" stroke="#2a2a40" stroke-width="1.5"/>
+
+  <!-- White bow/ribbon -->
+  <path d="M 136 222 Q 126 214 118 222 Q 128 230 136 222 Z" fill="#F8F8FF" stroke="#2a2a40" stroke-width="1.5"/>
+  <path d="M 164 222 Q 174 214 182 222 Q 172 230 164 222 Z" fill="#F8F8FF" stroke="#2a2a40" stroke-width="1.5"/>
+  <circle cx="150" cy="222" r="5.5" fill="#F8F8FF" stroke="#2a2a40" stroke-width="1.5"/>
+
+  <!-- Arms -->
+  <ellipse cx="70" cy="306" rx="20" ry="54" fill="#1A5BAA" stroke="#2a2a40" stroke-width="2.5" transform="rotate(-8,70,306)"/>
+  <ellipse cx="230" cy="306" rx="20" ry="54" fill="#1A5BAA" stroke="#2a2a40" stroke-width="2.5" transform="rotate(8,230,306)"/>
+
+  <!-- Hands -->
+  <ellipse cx="58" cy="355" rx="17" ry="15" fill="#FFE4C8" stroke="#2a2a40" stroke-width="2"/>
+  <ellipse cx="242" cy="355" rx="17" ry="15" fill="#FFE4C8" stroke="#2a2a40" stroke-width="2"/>
+
+  <!-- ===== NECK ===== -->
+  <rect x="133" y="180" width="34" height="30" rx="8" fill="#FFE4C8" stroke="#2a2a40" stroke-width="2.5"/>
+
+  <!-- ===== HEAD ===== -->
+  <ellipse cx="150" cy="122" rx="67" ry="70" fill="#FFE4C8" stroke="#2a2a40" stroke-width="3"/>
+
+  <!-- ===== FRONT HAIR ===== -->
+  <!-- Top hair mass -->
+  <path d="M 84 102 Q 90 42 150 40 Q 210 42 216 102 Q 196 64 150 62 Q 104 64 84 102 Z" fill="#D6D6EC" stroke="#2a2a40" stroke-width="2"/>
+  <!-- Left bang sweep -->
+  <path d="M 84 102 Q 72 116 78 142 Q 84 112 96 106 Z" fill="#D6D6EC" stroke="#2a2a40" stroke-width="1.5"/>
+  <!-- Right bang sweep -->
+  <path d="M 216 102 Q 228 116 222 142 Q 216 112 204 106 Z" fill="#D6D6EC" stroke="#2a2a40" stroke-width="1.5"/>
+  <!-- Center bang strands -->
+  <path d="M 126 60 Q 118 76 114 94 Q 126 80 128 66 Z" fill="#D6D6EC"/>
+  <path d="M 140 58 Q 136 74 134 92 Q 144 78 143 64 Z" fill="#D6D6EC"/>
+
+  <!-- ===== EYES (RED) ===== -->
+  <!-- Left eye white -->
+  <ellipse cx="120" cy="122" rx="13.5" ry="14.5" fill="white" stroke="#2a2a40" stroke-width="2"/>
+  <!-- Right eye white -->
+  <ellipse cx="180" cy="122" rx="13.5" ry="14.5" fill="white" stroke="#2a2a40" stroke-width="2"/>
+  <!-- Left iris crimson -->
+  <ellipse cx="122" cy="124" rx="9" ry="10" fill="#C01040"/>
+  <!-- Right iris crimson -->
+  <ellipse cx="182" cy="124" rx="9" ry="10" fill="#C01040"/>
+  <!-- Pupils -->
+  <circle cx="123" cy="125" r="5" fill="#1a1a2e"/>
+  <circle cx="183" cy="125" r="5" fill="#1a1a2e"/>
+  <!-- Shine left -->
+  <circle cx="126" cy="120" r="2.8" fill="white"/>
+  <circle cx="119" cy="126" r="1.4" fill="white"/>
+  <!-- Shine right -->
+  <circle cx="186" cy="120" r="2.8" fill="white"/>
+  <circle cx="179" cy="126" r="1.4" fill="white"/>
+
+  <!-- Eyebrows (silver) -->
+  <path d="M 108 106 Q 121 101 132 105" stroke="#C0C0D8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 168 105 Q 179 101 192 106" stroke="#C0C0D8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Blush -->
+  <ellipse cx="102" cy="140" rx="14" ry="7.5" fill="#FF90A8" opacity="0.45"/>
+  <ellipse cx="198" cy="140" rx="14" ry="7.5" fill="#FF90A8" opacity="0.45"/>
+
+  <!-- Nose -->
+  <path d="M 147 148 Q 150 153 153 148" stroke="#D4A090" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Mouth (open wide, happy "peko" smile) -->
+  <path d="M 136 158 Q 150 174 164 158" stroke="#2a2a40" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Teeth hint -->
+  <path d="M 138 160 Q 150 168 162 160" fill="white" opacity="0.7"/>
+
+  <!-- ===== CARROT HAIR ACCESSORIES (left side) ===== -->
+  <!-- Carrot 1 - top -->
+  <g transform="rotate(-22,102,68)">
+    <ellipse cx="102" cy="74" rx="7.5" ry="15" fill="#FF6B35" stroke="#2a2a40" stroke-width="1.5"/>
+    <!-- Carrot tip -->
+    <path d="M 102 60 L 100 52 L 104 60 Z" fill="#FF6B35" stroke="#2a2a40" stroke-width="1"/>
+    <!-- Carrot leaves -->
+    <path d="M 99 61 Q 93 50 95 56" stroke="#4CAF50" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <path d="M 102 59 Q 100 48 102 54" stroke="#4CAF50" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <path d="M 105 61 Q 111 50 109 56" stroke="#4CAF50" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- Carrot 2 - left -->
+  <g transform="rotate(-35,82,80)">
+    <ellipse cx="82" cy="86" rx="6.5" ry="13" fill="#FF6B35" stroke="#2a2a40" stroke-width="1.5"/>
+    <path d="M 82 74 L 80 67 L 84 74 Z" fill="#FF6B35" stroke="#2a2a40" stroke-width="1"/>
+    <path d="M 79 74 Q 74 64 76 70" stroke="#4CAF50" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M 82 73 Q 81 62 83 68" stroke="#4CAF50" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M 85 74 Q 90 64 88 70" stroke="#4CAF50" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- Carrot 3 - right of cluster -->
+  <g transform="rotate(-8,120,64)">
+    <ellipse cx="120" cy="70" rx="7" ry="14" fill="#FF6B35" stroke="#2a2a40" stroke-width="1.5"/>
+    <path d="M 120 57 L 118 50 L 122 57 Z" fill="#FF6B35" stroke="#2a2a40" stroke-width="1"/>
+    <path d="M 117 57 Q 113 46 115 53" stroke="#4CAF50" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M 121 56 Q 120 45 122 51" stroke="#4CAF50" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M 124 57 Q 128 47 127 53" stroke="#4CAF50" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+
+</svg>
