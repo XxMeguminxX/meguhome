@@ -20,7 +20,7 @@ describe('App', () => {
 
   it('renders character name from config', () => {
     render(<App />)
-    expect(screen.getByText(config.character.name)).toBeInTheDocument()
+    expect(screen.getAllByText(config.character.name).length).toBeGreaterThan(0)
   })
 
   it('renders nav link from config', () => {

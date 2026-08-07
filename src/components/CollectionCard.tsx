@@ -6,16 +6,23 @@ export default function CollectionCard() {
   const [lightbox, setLightbox] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    fetchImages()
-  }, [])
-
   async function fetchImages() {
     try {
       const res = await fetch('/api/collection')
       if (res.ok) setImages(await res.json())
-    } catch {}
+    } catch {
+      // ignore — keep last known image list
+    }
   }
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/collection')
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => { if (!cancelled && data) setImages(data) })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -45,17 +52,14 @@ export default function CollectionCard() {
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div>
-            <p className="text-[40px] font-black leading-none font-display" style={{ color: '#1a2a3a' }}>
+            <p className="text-[40px] font-black leading-none font-display text-ink">
               {String(images.length).padStart(2, '0')}.
             </p>
-            <p className="text-[13px] font-black" style={{ color: '#1a2a3a' }}>Megu Collection</p>
-            <p className="text-[11px] font-semibold" style={{ color: '#B07878' }}>Arch Wizard Album</p>
+            <p className="text-[13px] font-black text-ink">Megu Collection</p>
+            <p className="text-[11px] font-semibold text-blush-400">Arch Wizard Album</p>
           </div>
 
-          <button
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[#5F4F5D] transition-all hover:scale-105"
-            style={{ background: 'linear-gradient(135deg, #F7C964, #F5D048)', boxShadow: '0 3px 10px rgba(247,201,100,0.45)' }}
-          >
+          <button className="w-8 h-8 rounded-full flex items-center justify-center text-blush-700 transition-all hover:scale-105 bg-gradient-to-br from-ember-light to-ember shadow-[0_3px_10px_rgba(247,201,100,0.45)]">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
               <circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" />
             </svg>
@@ -87,21 +91,20 @@ export default function CollectionCard() {
           <button
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="aspect-square rounded-[10px] flex flex-col items-center justify-center gap-1 transition-all hover:scale-[1.03] border-2 border-dashed"
-            style={{ borderColor: uploading ? '#C24448' : '#EDD8D4' }}
-            onMouseEnter={e => { if (!uploading) { (e.currentTarget).style.borderColor = '#C24448'; (e.currentTarget).style.background = '#fdf0f0' } }}
-            onMouseLeave={e => { if (!uploading) { (e.currentTarget).style.borderColor = '#EDD8D4'; (e.currentTarget).style.background = 'transparent' } }}
+            className={`aspect-square rounded-[10px] flex flex-col items-center justify-center gap-1 transition-all hover:scale-[1.03] border-2 border-dashed ${
+              uploading ? 'border-crimson' : 'border-blush-200 hover:border-crimson hover:bg-blush-100'
+            }`}
           >
             {uploading ? (
-              <svg className="w-5 h-5 animate-spin" style={{ color: '#C24448' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg className="w-5 h-5 animate-spin text-crimson" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round"/>
               </svg>
             ) : (
               <>
-                <svg className="w-5 h-5" style={{ color: '#C8A0A0' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <svg className="w-5 h-5 text-blush-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
-                <span className="text-[9px] font-bold" style={{ color: '#C8A0A0' }}>Upload</span>
+                <span className="text-[9px] font-bold text-blush-300">Upload</span>
               </>
             )}
           </button>
@@ -120,8 +123,7 @@ export default function CollectionCard() {
             <img src={lightbox} alt="" className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain" />
             <button
               onClick={() => setLightbox(null)}
-              className="absolute -top-3 -right-3 w-8 h-8 rounded-full text-white flex items-center justify-center"
-              style={{ background: '#C24448' }}
+              className="absolute -top-3 -right-3 w-8 h-8 rounded-full text-white flex items-center justify-center bg-crimson"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
