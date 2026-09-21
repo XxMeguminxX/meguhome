@@ -3,42 +3,34 @@ import Sidebar from './components/Sidebar'
 import DashboardHeader from './components/DashboardHeader'
 import WeatherWidget from './components/WeatherWidget'
 import ProfileCard from './components/ProfileCard'
-import EventCard from './components/EventCard'
+import AboutCard from './components/AboutCard'
 import CollectionCard from './components/CollectionCard'
 import { config } from './config'
 
 export default function App() {
   return (
-    <div className="h-screen flex overflow-hidden p-4 gap-4">
-      {/* Sidebar — fixed height, no scroll */}
+    <div className="flex min-h-screen flex-col gap-4 p-4 lg:flex-row xl:h-screen xl:overflow-hidden">
       <Sidebar />
 
-      {/* Main content — scrollable */}
-      <main className="flex-1 flex flex-col gap-4 min-w-0 overflow-y-auto pr-1">
-        <div id="home">
-          <DashboardHeader />
-        </div>
+      <main id="home" className="flex min-w-0 flex-1 flex-col gap-4 xl:overflow-y-auto xl:pr-1">
+        <DashboardHeader />
 
-        {/* Card grid — 2 equal columns */}
-        <div className="grid grid-cols-2 gap-4">
-          {/* Left column */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-4">
             <ProfileCard />
-            <EventCard />
+            <AboutCard />
           </div>
 
-          {/* Right column */}
           <div className="flex flex-col gap-4">
             <WeatherWidget city={config.weather.city} apiKey={config.weather.apiKey} />
-            <div id="collection">
+            <div id="collection" className="scroll-mt-4">
               <CollectionCard />
             </div>
           </div>
         </div>
 
-        {/* Quick links */}
-        <div id="links" className="pb-4">
-          <p className="text-[10px] font-black text-blush-300 tracking-widest uppercase mb-2">Quick Access</p>
+        <section id="links" className="reveal scroll-mt-4 pb-2" style={{ animationDelay: '180ms' }}>
+          <h2 className="mb-2 font-display text-sm font-bold text-ink">Pinned links</h2>
           <div className="flex flex-wrap gap-2">
             {config.quickLinks.map(link => (
               <a
@@ -46,39 +38,38 @@ export default function App() {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-black text-blush-600 bg-white shadow-glow transition-all hover:scale-[1.03] hover:shadow-glow-lg"
+                className="flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-xs font-semibold text-mute transition-colors hover:border-crimson/40 hover:text-crimson"
               >
-                {link.icon && <span>{link.icon}</span>}
+                {link.icon && (
+                  <span aria-hidden="true" className="text-faint">
+                    {link.icon}
+                  </span>
+                )}
                 {link.label}
               </a>
             ))}
           </div>
-        </div>
+        </section>
       </main>
 
-      {/* Decorative character — right panel */}
-      <CharacterDecoration />
+      <CharacterArt />
     </div>
   )
 }
 
-function CharacterDecoration() {
+function CharacterArt() {
   const [imgError, setImgError] = useState(false)
 
+  if (imgError) return null
+
   return (
-    <div className="flex-shrink-0 w-[220px] flex items-end justify-center pointer-events-none">
-      {imgError ? (
-        <div className="text-[100px] select-none animate-float mb-8 drop-shadow-[0_10px_40px_rgba(194,68,72,0.4)]">
-          ✦
-        </div>
-      ) : (
-        <img
-          src={config.character.imagePath}
-          alt=""
-          onError={() => setImgError(true)}
-          className="w-full max-h-[80vh] h-auto object-contain animate-float drop-shadow-[0_12px_40px_rgba(194,68,72,0.4)]"
-        />
-      )}
+    <div className="pointer-events-none hidden w-[240px] shrink-0 items-end justify-center xl:flex">
+      <img
+        src={config.character.imagePath}
+        alt=""
+        onError={() => setImgError(true)}
+        className="drift h-auto max-h-[82vh] w-full object-contain drop-shadow-[0_18px_40px_rgba(193,57,74,0.28)]"
+      />
     </div>
   )
 }

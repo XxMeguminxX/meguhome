@@ -4,7 +4,6 @@ export interface CharacterConfig {
   description: string
   imagePath: string
   readMoreContent: string
-  tenorPostId?: string
 }
 
 export interface WeatherConfig {
@@ -18,9 +17,13 @@ export interface QuickLink {
   icon?: string
 }
 
+/** `icon` selects one of the glyphs defined in Sidebar. */
+export type NavIcon = 'home' | 'collection' | 'links'
+
 export interface NavLink {
   label: string
   href: string
+  icon: NavIcon
 }
 
 export interface SiteConfig {
@@ -32,6 +35,7 @@ export interface ProfileConfig {
   username: string
   handle: string
   bio: string
+  url: string
   avatarColor?: string
 }
 

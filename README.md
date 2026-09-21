@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+# Meguhome
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal start page: greeting, weather, pinned links, and an image collection you can upload to.
+React + TypeScript + Vite on the front, a small Express server for the collection uploads.
 
-Currently, two official plugins are available:
+## Run it
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules: 
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+cp .env.example .env   # then add your OpenWeather key
+npm run dev            # Vite on :5173 + upload server on :3001
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Without `VITE_WEATHER_API_KEY` the app still runs — the weather card just tells you the key is missing.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Vite dev server and the upload server together |
+| `npm run server` | Upload server only (`:3001`) |
+| `npm run build` | Typecheck, then build to `dist/` |
+| `npm test` | Run the test suite once |
+| `npm run lint` | ESLint over the project |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Layout
+
 ```
+src/
+  config.ts          Everything you would want to change: name, bio, links, city
+  types.ts           Config types
+  components/        One card per file
+  index.css          Base styles, the page-load reveal, reduced-motion handling
+tailwind.config.js   Colour, type, radius, and shadow tokens
+server.js            GET/POST/DELETE /api/collection, files land in public/archwizardcollection
+```
+
+Design tokens live in `tailwind.config.js` — warm paper background, white cards with hairline
+borders, crimson as the single accent and ember gold as support. Components use those tokens
+(`text-mute`, `rounded-card`, `bg-crimson-tint`) rather than one-off hex values.
+
+## Collection API
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| `GET` | `/api/collection` | Image paths, newest first |
+| `POST` | `/api/upload` | `multipart/form-data`, field `image`, 10 MB max, images only |
+| `DELETE` | `/api/collection/:filename` | Filename is resolved inside the collection directory only |
+
+The server has no authentication, so run it on your own machine or behind something that does.
+
+## Deploy
+
+`./deploy.sh` builds and rsyncs `dist/` to `$DEPLOY_HOST`, ships `nginx.conf`, and reloads nginx.
+See `DEPLOY.md`.

@@ -1,132 +1,172 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import type { ChangeEvent, MouseEvent } from 'react'
+
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 
 export default function CollectionCard() {
   const [images, setImages] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [lightbox, setLightbox] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  async function fetchImages() {
+  // Returns null when the list could not be read, so callers keep the last known state.
+  const fetchImages = useCallback(async (signal?: AbortSignal): Promise<string[] | null> => {
     try {
-      const res = await fetch('/api/collection')
-      if (res.ok) setImages(await res.json())
+      const res = await fetch('/api/collection', { signal })
+      return res.ok ? await res.json() : null
     } catch {
-      // ignore — keep last known image list
+      return null
     }
-  }
-
-  useEffect(() => {
-    let cancelled = false
-    fetch('/api/collection')
-      .then(res => (res.ok ? res.json() : null))
-      .then(data => { if (!cancelled && data) setImages(data) })
-      .catch(() => {})
-    return () => { cancelled = true }
   }, [])
 
-  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  const refresh = useCallback(async () => {
+    const list = await fetchImages()
+    if (list) setImages(list)
+  }, [fetchImages])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchImages(controller.signal).then(list => {
+      if (list) setImages(list)
+    })
+    return () => controller.abort()
+  }, [fetchImages])
+
+  useEffect(() => {
+    if (!lightbox) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [lightbox])
+
+  async function handleUpload(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+
+    setError(null)
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setError('That image is over 10 MB. Pick a smaller one.')
+      e.target.value = ''
+      return
+    }
+
     setUploading(true)
     try {
       const form = new FormData()
       form.append('image', file)
       const res = await fetch('/api/upload', { method: 'POST', body: form })
-      if (res.ok) await fetchImages()
+      if (!res.ok) throw new Error('upload failed')
+      await refresh()
+    } catch {
+      setError('Upload failed. Try again.')
     } finally {
       setUploading(false)
       if (inputRef.current) inputRef.current.value = ''
     }
   }
 
-  async function handleDelete(imagePath: string, e: React.MouseEvent) {
+  async function handleDelete(imagePath: string, e: MouseEvent) {
     e.stopPropagation()
-    const filename = imagePath.split('/').pop()!
-    await fetch(`/api/collection/${filename}`, { method: 'DELETE' })
-    setImages(prev => prev.filter(p => p !== imagePath))
+    const filename = imagePath.split('/').pop()
+    if (!filename) return
+
+    setError(null)
+    try {
+      const res = await fetch(`/api/collection/${encodeURIComponent(filename)}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('delete failed')
+      setImages(prev => prev.filter(p => p !== imagePath))
+    } catch {
+      setError('Could not remove that image. Try again.')
+    }
   }
 
   return (
     <>
-      <div className="card p-4 animate-fade-up delay-150">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <p className="text-[40px] font-black leading-none font-display text-ink">
-              {String(images.length).padStart(2, '0')}.
-            </p>
-            <p className="text-[13px] font-black text-ink">Megu Collection</p>
-            <p className="text-[11px] font-semibold text-blush-400">Arch Wizard Album</p>
-          </div>
-
-          <button className="w-8 h-8 rounded-full flex items-center justify-center text-blush-700 transition-all hover:scale-105 bg-gradient-to-br from-ember-light to-ember shadow-[0_3px_10px_rgba(247,201,100,0.45)]">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" />
-            </svg>
-          </button>
+      <section className="card reveal p-5" style={{ animationDelay: '150ms' }} aria-label="Collection">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="font-display text-base font-bold text-ink">Collection</h2>
+          <p className="text-2xs text-faint">
+            {images.length} {images.length === 1 ? 'image' : 'images'}
+          </p>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-3 gap-2">
-          {images.map((src, i) => (
-            <div
-              key={i}
-              className="aspect-square rounded-[10px] overflow-hidden cursor-pointer transition-all hover:scale-[1.03] hover:shadow-md relative group"
-              onClick={() => setLightbox(src)}
-            >
-              <img src={src} alt="" className="w-full h-full object-cover" />
-              {/* Delete button on hover */}
+        {images.length === 0 && !uploading && (
+          <p className="mt-1 text-xs text-mute">Nothing here yet. Add the first one.</p>
+        )}
+
+        <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {images.map(src => (
+            <div key={src} className="group relative">
               <button
-                onClick={e => handleDelete(src, e)}
-                className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                type="button"
+                onClick={() => setLightbox(src)}
+                className="block aspect-square w-full overflow-hidden rounded-tile bg-paper transition-shadow hover:shadow-lift"
               >
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" />
+              </button>
+              <button
+                type="button"
+                onClick={e => handleDelete(src, e)}
+                aria-label="Remove image"
+                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/60 text-white opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
+              >
+                <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                  <path d="m18 6-12 12M6 6l12 12" />
                 </svg>
               </button>
             </div>
           ))}
 
-          {/* Upload button */}
           <button
+            type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className={`aspect-square rounded-[10px] flex flex-col items-center justify-center gap-1 transition-all hover:scale-[1.03] border-2 border-dashed ${
-              uploading ? 'border-crimson' : 'border-blush-200 hover:border-crimson hover:bg-blush-100'
-            }`}
+            className="flex aspect-square flex-col items-center justify-center gap-1 rounded-tile border border-dashed border-line text-faint transition-colors hover:border-crimson hover:bg-crimson-tint hover:text-crimson disabled:cursor-wait"
           >
             {uploading ? (
-              <svg className="w-5 h-5 animate-spin text-crimson" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round"/>
+              <svg className="h-5 w-5 animate-spin text-crimson" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M12 3a9 9 0 1 0 9 9" strokeLinecap="round" />
               </svg>
             ) : (
-              <>
-                <svg className="w-5 h-5 text-blush-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span className="text-[9px] font-bold text-blush-300">Upload</span>
-              </>
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
             )}
+            <span className="text-2xs font-semibold">{uploading ? 'Uploading' : 'Add'}</span>
           </button>
         </div>
 
-        <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-      </div>
+        {error && (
+          <p role="alert" className="mt-3 text-xs text-crimson">
+            {error}
+          </p>
+        )}
 
-      {/* Lightbox */}
+        <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+      </section>
+
       {lightbox && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image preview"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/70 p-6 backdrop-blur-sm"
           onClick={() => setLightbox(null)}
         >
-          <div className="relative max-w-[90vw] max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            <img src={lightbox} alt="" className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain" />
+          <div className="relative max-h-full" onClick={e => e.stopPropagation()}>
+            <img src={lightbox} alt="" className="max-h-[85vh] max-w-full rounded-card object-contain" />
             <button
+              type="button"
               onClick={() => setLightbox(null)}
-              className="absolute -top-3 -right-3 w-8 h-8 rounded-full text-white flex items-center justify-center bg-crimson"
+              aria-label="Close preview"
+              autoFocus
+              className="absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center rounded-full bg-crimson text-white shadow-lift"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                <path d="m18 6-12 12M6 6l12 12" />
               </svg>
             </button>
           </div>

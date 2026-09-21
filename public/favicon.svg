@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <!-- Background circle -->
-  <circle cx="24" cy="24" r="24" fill="#C24448"/>
-  <!-- M letter -->
-  <text x="24" y="32" font-family="Georgia, serif" font-size="26" font-weight="bold" fill="#F7C964" text-anchor="middle">M</text>
+  <circle cx="24" cy="24" r="24" fill="#C1394A"/>
+  <path d="M24 9l3.6 8.4L36 13.8l-4.2 8.1L40 25.5l-8.4 1.8 2.4 8.7-8.4-4.5-3.6 7.5-3.6-7.5-8.4 4.5 2.4-8.7L4 25.5l8.2-3.6L8 13.8l8.4 3.6z" fill="#F0C34A"/>
+  <circle cx="24" cy="25" r="4.2" fill="#8E2333"/>
 </svg>

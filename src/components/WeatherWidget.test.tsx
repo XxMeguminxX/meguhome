@@ -4,7 +4,8 @@ import WeatherWidget from './WeatherWidget'
 
 const mockWeatherResponse = {
   weather: [{ description: 'clear sky', icon: '01d' }],
-  main: { temp: 30.5 },
+  main: { temp: 30.5, feels_like: 33.2, humidity: 74 },
+  wind: { speed: 3 },
   name: 'Jakarta',
 }
 
@@ -27,16 +28,33 @@ describe('WeatherWidget', () => {
     render(<WeatherWidget city="Jakarta" apiKey="test-key" />)
     await waitFor(() => {
       expect(screen.getByText('Jakarta')).toBeInTheDocument()
-      expect(screen.getByText(/30/)).toBeInTheDocument()
+      expect(screen.getByText('31')).toBeInTheDocument()
       expect(screen.getByText(/clear sky/i)).toBeInTheDocument()
     })
+    expect(screen.getByText('33°')).toBeInTheDocument()
+    expect(screen.getByText('74%')).toBeInTheDocument()
+    expect(screen.getByText('11 km/h')).toBeInTheDocument()
+  })
+
+  it('falls back to a dash when the response omits optional fields', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        weather: [{ description: 'clear sky', icon: '01d' }],
+        main: { temp: 28 },
+        name: 'Jakarta',
+      }),
+    } as Response)
+    render(<WeatherWidget city="Jakarta" apiKey="test-key" />)
+    await waitFor(() => expect(screen.getByText('28')).toBeInTheDocument())
+    expect(screen.getAllByText('—')).toHaveLength(2)
   })
 
   it('shows error state when fetch throws', async () => {
     vi.spyOn(global, 'fetch').mockRejectedValueOnce(new Error('network error'))
     render(<WeatherWidget city="Jakarta" apiKey="test-key" />)
     await waitFor(() => {
-      expect(screen.getByText(/cuaca tidak tersedia/i)).toBeInTheDocument()
+      expect(screen.getByText(/weather unavailable/i)).toBeInTheDocument()
     })
   })
 
@@ -44,7 +62,14 @@ describe('WeatherWidget', () => {
     vi.spyOn(global, 'fetch').mockResolvedValueOnce({ ok: false } as Response)
     render(<WeatherWidget city="Jakarta" apiKey="test-key" />)
     await waitFor(() => {
-      expect(screen.getByText(/cuaca tidak tersedia/i)).toBeInTheDocument()
+      expect(screen.getByText(/weather unavailable/i)).toBeInTheDocument()
     })
+  })
+
+  it('asks for an API key instead of fetching when none is configured', () => {
+    const fetchSpy = vi.spyOn(global, 'fetch')
+    render(<WeatherWidget city="Jakarta" apiKey="" />)
+    expect(screen.getByText(/VITE_WEATHER_API_KEY/)).toBeInTheDocument()
+    expect(fetchSpy).not.toHaveBeenCalled()
   })
 })
