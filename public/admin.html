@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Collection Admin</title>
+<style>
+  :root { --ink:#241c20; --paper:#faf6f2; --line:#e8ddd6; --crimson:#c1394a; --mute:#8a7c78; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:24px; background:var(--paper); color:var(--ink); font:14px/1.5 system-ui, sans-serif; }
+  h1 { font-size:18px; margin:0 0 16px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+  input[type=password] { padding:8px 10px; border:1px solid var(--line); border-radius:8px; }
+  button { padding:8px 14px; border:1px solid var(--line); border-radius:8px; background:#fff; cursor:pointer; font-weight:600; }
+  button:hover { border-color:var(--crimson); color:var(--crimson); }
+  button.danger:hover { background:var(--crimson); color:#fff; border-color:var(--crimson); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
+  .item { position:relative; aspect-ratio:1; overflow:hidden; border-radius:10px; background:#fff; }
+  .item img { width:100%; height:100%; object-fit:cover; display:block; }
+  .item .del { position:absolute; top:6px; right:6px; width:26px; height:26px; padding:0; border-radius:50%; background:rgba(36,28,32,.65); color:#fff; border:none; }
+  .msg { margin:12px 0; color:var(--crimson); min-height:1em; }
+  .empty { color:var(--mute); }
+</style>
+</head>
+<body>
+<h1>Collection admin</h1>
+
+<div class="row">
+  <input id="token" type="password" placeholder="Admin token" autocomplete="current-password" />
+  <button id="save">Save token</button>
+  <button id="refresh">Refresh</button>
+  <button id="pick">Upload image</button>
+  <input id="file" type="file" accept="image/*" hidden />
+</div>
+
+<p id="msg" class="msg"></p>
+<div id="grid" class="grid"></div>
+<p id="empty" class="empty" hidden>Nothing here yet.</p>
+
+<script>
+const msg = document.getElementById('msg')
+const grid = document.getElementById('grid')
+const empty = document.getElementById('empty')
+const tokenInput = document.getElementById('token')
+
+tokenInput.value = sessionStorage.getItem('adminToken') || ''
+
+function token() { return sessionStorage.getItem('adminToken') || '' }
+function say(text) { msg.textContent = text || '' }
+function auth() {
+  return { 'x-admin-token': token() }
+}
+
+async function load() {
+  try {
+    const res = await fetch('/api/collection')
+    if (!res.ok) throw new Error('list failed')
+    const images = await res.json()
+    grid.innerHTML = ''
+    empty.hidden = images.length > 0
+    for (const src of images) {
+      const name = decodeURIComponent(src.split('/').pop())
+      const item = document.createElement('div')
+      item.className = 'item'
+      item.innerHTML = '<img src="' + src + '" alt=""><button class="del" title="Delete">&times;</button>'
+      item.querySelector('.del').onclick = () => remove(name)
+      grid.appendChild(item)
+    }
+  } catch {
+    say('Could not load the collection.')
+  }
+}
+
+async function remove(name) {
+  if (!confirm('Delete ' + name + '?')) return
+  try {
+    const res = await fetch('/api/collection/' + encodeURIComponent(name), { method: 'DELETE', headers: auth() })
+    if (res.status === 401) return say('Wrong token.')
+    if (!res.ok) throw new Error('delete failed')
+    say('')
+    load()
+  } catch {
+    say('Delete failed.')
+  }
+}
+
+document.getElementById('save').onclick = () => {
+  sessionStorage.setItem('adminToken', tokenInput.value.trim())
+  say('Token saved in this browser session.')
+}
+
+document.getElementById('refresh').onclick = () => { say(''); load() }
+document.getElementById('pick').onclick = () => document.getElementById('file').click()
+
+document.getElementById('file').onchange = async e => {
+  const file = e.target.files && e.target.files[0]
+  e.target.value = ''
+  if (!file) return
+  const form = new FormData()
+  form.append('image', file)
+  say('Uploading…')
+  try {
+    const res = await fetch('/api/upload', { method: 'POST', body: form, headers: auth() })
+    if (res.status === 401) return say('Wrong token.')
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      throw new Error(data.error || 'upload failed')
+    }
+    say('')
+    load()
+  } catch (err) {
+    say(err.message === 'upload failed' ? 'Upload failed.' : err.message)
+  }
+}
+
+load()
+</script>
+</body>
+</html>

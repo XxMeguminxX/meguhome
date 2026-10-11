@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import express from 'express'
 import multer from 'multer'
 import path from 'path'
@@ -11,6 +12,21 @@ const PORT = process.env.PORT || 3001
 const COLLECTION_DIR = path.join(__dirname, 'public', 'archwizardcollection')
 const IMAGE_RE = /\.(jpe?g|png|gif|webp)$/i
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || ''
+
+function safeEqual(a, b) {
+  const ha = crypto.createHash('sha256').update(String(a)).digest()
+  const hb = crypto.createHash('sha256').update(String(b)).digest()
+  return crypto.timingSafeEqual(ha, hb)
+}
+
+function requireAdmin(req, res, next) {
+  if (!ADMIN_TOKEN) return res.status(503).json({ error: 'ADMIN_TOKEN is not set on the server' })
+  const header = req.get('authorization') || ''
+  const token = header.replace(/^Bearer\s+/i, '') || req.get('x-admin-token') || ''
+  if (!token || !safeEqual(token, ADMIN_TOKEN)) return res.status(401).json({ error: 'Unauthorized' })
+  next()
+}
 
 fs.mkdirSync(COLLECTION_DIR, { recursive: true })
 
@@ -66,12 +82,12 @@ app.get('/api/collection', (req, res) => {
   }
 })
 
-app.post('/api/upload', upload.single('image'), (req, res) => {
+app.post('/api/upload', requireAdmin, upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' })
   res.status(201).json({ path: `/archwizardcollection/${encodeURIComponent(req.file.filename)}` })
 })
 
-app.delete('/api/collection/:filename', (req, res) => {
+app.delete('/api/collection/:filename', requireAdmin, (req, res) => {
   const filePath = resolveInCollection(req.params.filename)
   if (!filePath) return res.status(400).json({ error: 'Invalid filename' })
 
